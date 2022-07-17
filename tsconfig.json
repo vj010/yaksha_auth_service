@@ -13,12 +13,14 @@
         "incremental": true,
         "resolveJsonModule": true,
         "esModuleInterop": true
+        
     },
     "include": [
-        "src"
+        "src",
+        "tests"
     ],
     "exclude": [
         "node_modules",
-        "**/__tests__/*"
+        
     ]
 }

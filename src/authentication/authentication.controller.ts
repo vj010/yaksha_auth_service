@@ -12,11 +12,11 @@ export class AuthenticationController implements AppContextController {
   }
 
   private loginRouteHandler(request: Request, response: Response): void {
-    response.send('login');
+    response.send('vj');
   }
 
   private logoutHandler(reques: Request, response: Response) {
-    response.send('login');
+    response.send('logout');
   }
 
   public getRouter(): { controllerPath: string; router: Router } {

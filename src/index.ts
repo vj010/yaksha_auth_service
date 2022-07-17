@@ -8,6 +8,6 @@ dotenv.config();
 
 appContext.addMiddleWare(express.json(), urlencoded({ extended: true }));
 
-appContext.startServer(parseInt(process.env.PORT));
-
 appContext.setControllerRoutes(new AuthenticationController().getRouter());
+
+appContext.startServer(parseInt(process.env.PORT));

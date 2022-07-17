@@ -25,4 +25,16 @@ export class AppContext {
   public setControllerRoutes(routingInfo: RoutingInfo): void {
     this.app.use(routingInfo.controllerPath, routingInfo.router);
   }
+
+  public getApp(): Application {
+    const cloneApp = express();
+    for (const attribute in this.app) {
+      if (typeof this[attribute] === 'object') {
+        cloneApp[attribute] = this[attribute].clone();
+      } else {
+        cloneApp[attribute] = this.app[attribute];
+      }
+    }
+    return cloneApp;
+  }
 }
