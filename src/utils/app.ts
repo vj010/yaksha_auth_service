@@ -1,6 +1,6 @@
 import express from 'express';
 import { Application, RequestHandler } from 'express-serve-static-core';
-import { RoutingInfo } from 'src/interfaces/app_context_controller.interface';
+import { AppContextController } from 'src/interfaces/app_context_controller.interface';
 export class AppContext {
   private app: Application;
   private port: number;
@@ -22,8 +22,8 @@ export class AppContext {
     for (const middleWare of middleWares) this.app.use(middleWare);
   }
 
-  public setControllerRoutes(routingInfo: RoutingInfo): void {
-    this.app.use(routingInfo.controllerPath, routingInfo.router);
+  public setControllerRoutes(controller: AppContextController): void {
+    this.app.use(controller.controllerPath, controller.getRouter());
   }
 
   public getApp(): Application {

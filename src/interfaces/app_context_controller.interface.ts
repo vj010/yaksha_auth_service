@@ -2,10 +2,5 @@ import { Router } from 'express';
 
 export interface AppContextController {
   controllerPath: string;
-  getRouter(): void;
+  getRouter(): Router;
 }
-
-export type RoutingInfo = {
-  controllerPath: string;
-  router: Router;
-};

@@ -1,25 +1,36 @@
 import express, { Request, Response, Router } from 'express';
+import { AppContextAuthenticationService } from 'src/interfaces/app_context_auth_service.interface';
 import { AppContextController } from 'src/interfaces/app_context_controller.interface';
 
 export class AuthenticationController implements AppContextController {
   private router: Router;
   controllerPath: string;
-  constructor() {
+  private appContextAuthenticationService: AppContextAuthenticationService;
+  constructor(
+    appContextAuthenticationService: AppContextAuthenticationService,
+  ) {
     this.router = express.Router();
+    this.appContextAuthenticationService = appContextAuthenticationService;
     this.controllerPath = '/authenticate';
-    this.router.get('/login', this.loginRouteHandler);
-    this.router.get('/logout', this.logoutHandler);
+    this.router.get('/getLoginUrl', this.getLoginUrlHandler.bind(this));
+    this.router.get('/logout', this.logoutHandler.bind(this));
+    this.router.post('/login');
   }
 
-  private loginRouteHandler(request: Request, response: Response): void {
+  async getLoginUrlHandler(_: Request, response: Response): Promise<void> {
+    const url = await this.appContextAuthenticationService.getLoginUrl();
+    response.send(url);
+  }
+
+  loginRouteHandler(request: Request, response: Response): void {
     response.send('vj');
   }
 
-  private logoutHandler(reques: Request, response: Response) {
+  logoutHandler(reques: Request, response: Response) {
     response.send('logout');
   }
 
-  public getRouter(): { controllerPath: string; router: Router } {
-    return { controllerPath: this.controllerPath, router: this.router };
+  getRouter(): Router {
+    return this.router;
   }
 }
