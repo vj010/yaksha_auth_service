@@ -7,4 +7,6 @@ export type GoogleOAuthConfig = {
   responseType: string;
   prompt: string;
   scope: string[];
+  googleTokenUrl: string;
+  grantType: string;
 };

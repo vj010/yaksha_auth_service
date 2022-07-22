@@ -1,6 +1,8 @@
-import { AppContextAuthenticationService } from 'src/interfaces/app_context_auth_service.interface';
-import { GoogleOAuthConfig } from 'src/types/googleOAuthConfig';
+import axios from 'axios';
 import querystring from 'querystring';
+import { AppContextAuthenticationService } from 'src/interfaces/app_context_auth_service.interface';
+import { GoogleTokenResponse } from 'src/types/google-token-reponse';
+import { GoogleOAuthConfig } from 'src/types/googleOAuthConfig';
 
 export class AuthenticationService implements AppContextAuthenticationService {
   private oAuthConfig: GoogleOAuthConfig;
@@ -22,8 +24,16 @@ export class AuthenticationService implements AppContextAuthenticationService {
     return `${rootUrl}?${querystring.stringify(options)}`;
   }
 
-  async login(code: string): Promise<void> {
-    throw new Error('Method not implemented.');
+  async login(code: string): Promise<any> {
+    try {
+      const googleTokeRes: GoogleTokenResponse = await this.getGoogleAuthTokens(
+        code,
+      );
+      const userInfo = await this.getGoogleUserInfo(googleTokeRes.access_token);
+      return userInfo;
+    } catch (error) {
+      throw error;
+    }
   }
 
   async logout(): Promise<void> {
@@ -32,5 +42,35 @@ export class AuthenticationService implements AppContextAuthenticationService {
 
   registerUser(): void | Promise<void> {
     throw new Error('Method not implemented.');
+  }
+
+  async getGoogleAuthTokens(code: string): Promise<GoogleTokenResponse> {
+    const url = this.oAuthConfig.googleTokenUrl;
+    const values = {
+      code,
+      client_id: this.oAuthConfig.googleClientId,
+      client_secret: this.oAuthConfig.googleClientSecret,
+      redirect_uri: this.oAuthConfig.redirectUrl,
+      grant_type: this.oAuthConfig.grantType,
+    };
+
+    try {
+      const { data } = await axios.post<GoogleTokenResponse>(
+        url,
+        querystring.stringify(values),
+        {
+          headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+          },
+        },
+      );
+      return data;
+    } catch (err: any) {
+      throw new Error(err);
+    }
+  }
+
+  async getGoogleUserInfo(accessToken: string): Promise<Record<string, any>> {
+    return {};
   }
 }

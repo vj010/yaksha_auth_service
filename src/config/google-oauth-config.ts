@@ -9,4 +9,6 @@ export const googleOAuthConfig: GoogleOAuthConfig = {
   responseType: process.env.GOOGLE_AUTH_RESPONSE_TYPE,
   prompt: process.env.GOOGLE_AUTH_PROMPT,
   scope: (process.env.GOOGLE_AUTH_SCOPE as string)?.split(','),
+  googleTokenUrl: process.env.GOOGLE_AUTH_TOKEN_URL,
+  grantType: process.env.GOOGLE_AUTH_GRANT_TYPE,
 };
