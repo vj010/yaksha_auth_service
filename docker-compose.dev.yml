@@ -1,0 +1,10 @@
+version: "3.9"
+
+services:      
+  web:    
+    command: start:dev
+    volumes:
+      - ./src:/usr/src/yaksa_auth_service/src
+    
+  
+ 

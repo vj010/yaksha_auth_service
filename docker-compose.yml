@@ -1,0 +1,45 @@
+version: "3.9"
+
+services:      
+  web:
+    container_name: yasksha_auth_service
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - ${PORT}:3000
+    environment:
+      - MONGO_CONNECTION_URL=${MONGO_CONNECTION_URL:-mongodb://root:rootPass@mongo:27017/}
+    env_file:
+      - "./.env"
+    networks:
+      - yaksha-network
+    entrypoint: npm run
+    command: start    
+    depends_on:
+      mongo:
+        condition: service_healthy    
+  
+  mongo:
+    image: mongo:5.0.9
+    container_name: yaksha_auth_mongo
+    env_file:
+      - "./.env"
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=${MONGO_INITDB_ROOT_USERNAME:-root}
+      - MONGO_INITDB_ROOT_PASSWORD=${MONGO_INITDB_ROOT_PASSWORD:-root}
+    healthcheck:
+      test: echo 'db.runCommand({serverStatus:1}).ok' | mongo admin -u ${MONGO_INITDB_ROOT_USERNAME:-root} -p ${MONGO_INITDB_ROOT_USERNAME:-root} --quiet | grep 1
+      interval: 10s
+      timeout: 20s
+      retries: 5
+      start_period: 20s
+    networks: 
+      - yaksha-network
+
+networks:
+  yaksha-network:
+
+volumes:
+  yaksha-auth-mongo-vol:
+
