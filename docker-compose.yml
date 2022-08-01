@@ -3,19 +3,31 @@ version: "3.9"
 services:      
   web:
     container_name: yasksha_auth_service
+    image: yasksha_auth_service 
     build:
       context: .
       dockerfile: Dockerfile
+      args:
+        MODE: ${APP_MODE}
     ports:
       - ${PORT}:3000
     environment:
       - MONGO_CONNECTION_URL=${MONGO_CONNECTION_URL:-mongodb://root:rootPass@mongo:27017/}
+      - GOOGLE_CLIENT_ID=${GOOGLE_CLIENT_ID}
+      - GOOGLE_CLIENT_SECRET=${GOOGLE_CLIENT_SECRET}
+      - GOOGLE_LOGIN_ROOT=${GOOGLE_LOGIN_ROOT}
+      - GOOGLE_REDIRECT_URL=${GOOGLE_REDIRECT_URL}
+      - GOOGLE_AUTH_ROOT_URL=${GOOGLE_AUTH_ROOT_URL}
+      - GOOGLE_AUTH_ACCESS_TYPE=${GOOGLE_AUTH_ACCESS_TYPE}
+      - GOOGLE_AUTH_RESPONSE_TYPE=${GOOGLE_AUTH_RESPONSE_TYPE}
+      - GOOGLE_AUTH_PROMPT=${GOOGLE_AUTH_PROMPT}
+      - GOOGLE_AUTH_SCOPE=${GOOGLE_AUTH_SCOPE}
+      - GOOGLE_AUTH_TOKEN_URL=${GOOGLE_AUTH_TOKEN_URL}
+      - GOOGLE_AUTH_GRANT_TYPE=${GOOGLE_AUTH_GRANT_TYPE}
     env_file:
       - "./.env"
     networks:
-      - yaksha-network
-    entrypoint: npm run
-    command: start    
+      - yaksha-network    
     depends_on:
       mongo:
         condition: service_healthy    

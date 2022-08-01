@@ -6,5 +6,6 @@ RUN npm install
 COPY . .
 
 RUN npm run build
-
-CMD  npm run start:dev
+ARG MODE
+ENV APP_MODE=${MODE}
+CMD ["sh","-c","npm run ${APP_MODE}" ]
