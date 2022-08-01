@@ -9,4 +9,5 @@ export type GoogleOAuthConfig = {
   scope: string[];
   googleTokenUrl: string;
   grantType: string;
+  profileInfoUrl: string;
 };

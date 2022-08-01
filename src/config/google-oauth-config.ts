@@ -11,4 +11,5 @@ export const googleOAuthConfig: GoogleOAuthConfig = {
   scope: (process.env.GOOGLE_AUTH_SCOPE as string)?.split(','),
   googleTokenUrl: process.env.GOOGLE_AUTH_TOKEN_URL,
   grantType: process.env.GOOGLE_AUTH_GRANT_TYPE,
+  profileInfoUrl: process.env.GOOGLE_PROFILE_INFO_URL,
 };

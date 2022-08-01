@@ -4,6 +4,7 @@ services:
   web:    
     volumes:
       - ./src:/usr/src/yaksa_auth_service/src
+      - ./tests:/usr/src/yaksa_auth_service/tests
     
   
  

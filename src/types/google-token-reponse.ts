@@ -4,4 +4,5 @@ export type GoogleTokenResponse = {
   refresh_token: string;
   scope: string;
   id_token: string;
+  token_type: string;
 };

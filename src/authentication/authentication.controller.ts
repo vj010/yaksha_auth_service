@@ -14,7 +14,7 @@ export class AuthenticationController implements AppContextController {
     this.controllerPath = '/authenticate';
     this.router.get('/getLoginUrl', this.getLoginUrlHandler.bind(this));
     this.router.get('/logout', this.logoutHandler.bind(this));
-    this.router.post('/login');
+    this.router.get('/login', this.loginRouteHandler.bind(this));
   }
 
   async getLoginUrlHandler(_: Request, response: Response): Promise<void> {
@@ -22,8 +22,13 @@ export class AuthenticationController implements AppContextController {
     response.send(url);
   }
 
-  loginRouteHandler(request: Request, response: Response): void {
-    response.send('vj');
+  async loginRouteHandler(request: Request, response: Response): Promise<void> {
+    const loginStatus = await this.appContextAuthenticationService.login(
+      request?.query?.code,
+    );
+
+    if (loginStatus) response.sendStatus(200);
+    else response.sendStatus(401);
   }
 
   logoutHandler(reques: Request, response: Response) {

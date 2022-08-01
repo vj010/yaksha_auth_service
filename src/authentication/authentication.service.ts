@@ -71,6 +71,14 @@ export class AuthenticationService implements AppContextAuthenticationService {
   }
 
   async getGoogleUserInfo(accessToken: string): Promise<Record<string, any>> {
-    return {};
+    try {
+      const { data } = await axios.get<Record<any, any>>(
+        `${this.oAuthConfig.profileInfoUrl}?alt=json&access_token=${accessToken}`,
+      );
+      console.log('user profile data', data);
+      return data;
+    } catch (err) {
+      throw new Error(err);
+    }
   }
 }
