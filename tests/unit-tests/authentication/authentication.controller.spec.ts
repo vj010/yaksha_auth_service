@@ -46,3 +46,19 @@ describe('AuthenticationController /getLoginUrl tests', () => {
     expect(authServiceSpy).toHaveBeenCalled();
   });
 });
+
+describe('AuthenticationController /login tests', () => {
+  const appContext: AppContext = new AppContext(
+    parseInt(process.env.TEST_PORT ?? process.env.PORT),
+  );
+
+  beforeEach(() => {
+    appContext.setControllerRoutes(new AuthenticationController(authService));
+    app = appContext.getApp();
+    if (!app) throw new Error('could not get app object');
+  });
+
+  it('testing get /login route status', async () => {
+    await request(app).get('/authenticate/login?code=dummyCode').expect(500);
+  });
+});

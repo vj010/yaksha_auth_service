@@ -78,7 +78,7 @@ export class AuthenticationService implements AppContextAuthenticationService {
       return data;
     } catch (error) {
       console.log(error);
-      throw new Error(`google api responded with:${error}`);
+      throw new Error(`google api responded with:${error.code}`);
     }
   }
 
@@ -90,7 +90,7 @@ export class AuthenticationService implements AppContextAuthenticationService {
       return data;
     } catch (error) {
       console.log(error);
-      throw new Error(`google responded with ${error}`);
+      throw new Error(`google api responded with:${error.code}`);
     }
   }
 }

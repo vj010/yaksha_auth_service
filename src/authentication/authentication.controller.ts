@@ -24,16 +24,15 @@ export class AuthenticationController implements AppContextController {
   }
 
   async loginRouteHandler(request: Request, response: Response): Promise<void> {
-    const loginStatus: MethodReturnValue<any> =
-      await this.appContextAuthenticationService.login(request?.query?.code);
-
-    if (!loginStatus.success) {
-      response.status(500);
-      response.send(loginStatus.message);
+    let loginStatus: MethodReturnValue<any>;
+    try {
+      loginStatus = await this.appContextAuthenticationService.login(
+        request?.query?.code,
+      );
+      response.status(200).send(loginStatus.data);
+    } catch (error) {
+      response.status(500).send(`${error.message}`);
     }
-
-    response.status(200);
-    response.send(loginStatus.data);
   }
 
   logoutHandler(reques: Request, response: Response) {

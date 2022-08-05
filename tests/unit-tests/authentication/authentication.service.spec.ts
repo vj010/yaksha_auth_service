@@ -36,7 +36,9 @@ describe('Authentication Service getGoogleAuthTokens', () => {
 
     await expect(
       authService.getGoogleAuthTokens('dummyCode'),
-    ).rejects.toThrow();
+    ).rejects.toMatchObject(
+      new Error('google api responded with:ERR_BAD_REQUEST'),
+    );
 
     expect(getGoogleAuthTokensSpy).toHaveBeenCalledTimes(1);
     expect(getGoogleAuthTokensSpy).toHaveBeenCalledWith('dummyCode');
@@ -54,9 +56,13 @@ describe('Authentication Service getGoogleUserInfo test', () => {
       authenticationService,
       'getGoogleUserInfo',
     );
+
     await expect(
       authenticationService.getGoogleUserInfo('dummyAccessToken'),
-    ).rejects.toThrow();
+    ).rejects.toMatchObject(
+      new Error('google api responded with:ERR_BAD_REQUEST'),
+    );
+
     expect(getGoogleUserInfoSpy).toHaveBeenCalled();
     expect(getGoogleUserInfoSpy).toHaveBeenCalledTimes(1);
   });
@@ -109,20 +115,4 @@ describe('AuthenticationService login test', () => {
       }),
     );
   });
-
-  // it('login token method without error', async () => {
-  //   const getGoogleAuthTokens = jest
-  //     .spyOn(authService, 'getGoogleAuthTokens')
-  //     .mockImplementation(() => {
-  //       throw new Error('test error');
-  //     });
-
-  //   try {
-  //     const a = await authService.login('abc');
-  //     console.log('hello world');
-  //   } catch (error) {
-  //     expect(error).toEqual(new Error('test error'));
-  //   }
-  //   expect(getGoogleAuthTokens).toThrow('test error');
-  // });
 });
