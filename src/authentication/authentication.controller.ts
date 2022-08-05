@@ -1,6 +1,7 @@
 import express, { Request, Response, Router } from 'express';
 import { AppContextAuthenticationService } from 'src/interfaces/app_context_auth_service.interface';
 import { AppContextController } from 'src/interfaces/app_context_controller.interface';
+import { MethodReturnValue } from 'src/interfaces/method_return_value.interface';
 
 export class AuthenticationController implements AppContextController {
   private router: Router;
@@ -23,12 +24,16 @@ export class AuthenticationController implements AppContextController {
   }
 
   async loginRouteHandler(request: Request, response: Response): Promise<void> {
-    const loginStatus = await this.appContextAuthenticationService.login(
-      request?.query?.code,
-    );
+    const loginStatus: MethodReturnValue<any> =
+      await this.appContextAuthenticationService.login(request?.query?.code);
 
-    if (loginStatus) response.sendStatus(200);
-    else response.sendStatus(401);
+    if (!loginStatus.success) {
+      response.status(500);
+      response.send(loginStatus.message);
+    }
+
+    response.status(200);
+    response.send(loginStatus.data);
   }
 
   logoutHandler(reques: Request, response: Response) {

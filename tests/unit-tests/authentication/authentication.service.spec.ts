@@ -1,5 +1,5 @@
-import { AuthenticationService } from '../../../src/authentication/authentication.service';
 import dontenv from 'dotenv';
+import { AuthenticationService } from '../../../src/authentication/authentication.service';
 import { googleOAuthConfig } from '../../../src/config/google-oauth-config';
 dontenv.config();
 
@@ -22,6 +22,46 @@ describe('AuthenticationService getLoginUrl test', () => {
   });
 });
 
+describe('Authentication Service getGoogleAuthTokens', () => {
+  let authService: AuthenticationService;
+  beforeEach(() => {
+    authService = new AuthenticationService(googleOAuthConfig);
+  });
+
+  it('error response', async () => {
+    const getGoogleAuthTokensSpy = jest.spyOn(
+      authService,
+      'getGoogleAuthTokens',
+    );
+
+    await expect(
+      authService.getGoogleAuthTokens('dummyCode'),
+    ).rejects.toThrow();
+
+    expect(getGoogleAuthTokensSpy).toHaveBeenCalledTimes(1);
+    expect(getGoogleAuthTokensSpy).toHaveBeenCalledWith('dummyCode');
+  });
+});
+
+describe('Authentication Service getGoogleUserInfo test', () => {
+  let authenticationService: AuthenticationService;
+  beforeEach(() => {
+    authenticationService = new AuthenticationService(googleOAuthConfig);
+  });
+
+  it('called with dumy access token', async () => {
+    const getGoogleUserInfoSpy = jest.spyOn(
+      authenticationService,
+      'getGoogleUserInfo',
+    );
+    await expect(
+      authenticationService.getGoogleUserInfo('dummyAccessToken'),
+    ).rejects.toThrow();
+    expect(getGoogleUserInfoSpy).toHaveBeenCalled();
+    expect(getGoogleUserInfoSpy).toHaveBeenCalledTimes(1);
+  });
+});
+
 describe('AuthenticationService login test', () => {
   let authService: AuthenticationService;
 
@@ -30,7 +70,7 @@ describe('AuthenticationService login test', () => {
   });
 
   it('login token method without error', async () => {
-    const getGoogleAuthTokens = jest
+    const getGoogleAuthTokensSpy = jest
       .spyOn(authService, 'getGoogleAuthTokens')
       .mockImplementation(() =>
         Promise.resolve({
@@ -55,11 +95,11 @@ describe('AuthenticationService login test', () => {
       );
 
     await authService.login('abc');
-    expect(getGoogleAuthTokens).toHaveBeenCalledTimes(1);
+    expect(getGoogleAuthTokensSpy).toHaveBeenCalledTimes(1);
     expect(getGoogleUserInfoSpy).toHaveBeenCalledTimes(1);
     expect(getGoogleUserInfoSpy).toHaveBeenCalledWith('abc');
-    expect(getGoogleAuthTokens).toReturn();
-    expect(getGoogleAuthTokens).toReturnWith(
+    expect(getGoogleAuthTokensSpy).toReturn();
+    expect(getGoogleAuthTokensSpy).toReturnWith(
       Promise.resolve({
         access_token: 'abc',
         expires_in: 12456789,

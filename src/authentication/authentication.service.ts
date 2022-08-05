@@ -1,6 +1,7 @@
 import axios from 'axios';
 import querystring from 'querystring';
 import { AppContextAuthenticationService } from 'src/interfaces/app_context_auth_service.interface';
+import { MethodReturnValue } from 'src/interfaces/method_return_value.interface';
 import { GoogleTokenResponse } from 'src/types/google-token-reponse';
 import { GoogleOAuthConfig } from 'src/types/googleOAuthConfig';
 
@@ -24,16 +25,27 @@ export class AuthenticationService implements AppContextAuthenticationService {
     return `${rootUrl}?${querystring.stringify(options)}`;
   }
 
-  async login(code: string): Promise<any> {
-    try {
-      const googleTokeRes: GoogleTokenResponse = await this.getGoogleAuthTokens(
-        code,
-      );
-      const userInfo = await this.getGoogleUserInfo(googleTokeRes.access_token);
-      return userInfo;
-    } catch (error) {
-      throw error;
+  async login(code: string): Promise<MethodReturnValue<any>> {
+    const googleTokeRes: GoogleTokenResponse = await this.getGoogleAuthTokens(
+      code,
+    );
+    if (!googleTokeRes?.access_token) {
+      return {
+        data: null,
+        success: false,
+        error: null,
+        message: 'could not get access token',
+      };
     }
+    const userInfo = await this.getGoogleUserInfo(googleTokeRes?.access_token);
+    if (!userInfo)
+      return {
+        data: null,
+        success: false,
+        error: null,
+        message: 'could not get user info',
+      };
+    return { data: userInfo, success: true, error: null };
   }
 
   async logout(): Promise<void> {
@@ -53,7 +65,6 @@ export class AuthenticationService implements AppContextAuthenticationService {
       redirect_uri: this.oAuthConfig.redirectUrl,
       grant_type: this.oAuthConfig.grantType,
     };
-
     try {
       const { data } = await axios.post<GoogleTokenResponse>(
         url,
@@ -65,8 +76,9 @@ export class AuthenticationService implements AppContextAuthenticationService {
         },
       );
       return data;
-    } catch (err: any) {
-      throw new Error(err);
+    } catch (error) {
+      console.log(error);
+      throw new Error(`google api responded with:${error}`);
     }
   }
 
@@ -75,10 +87,10 @@ export class AuthenticationService implements AppContextAuthenticationService {
       const { data } = await axios.get<Record<any, any>>(
         `${this.oAuthConfig.profileInfoUrl}?alt=json&access_token=${accessToken}`,
       );
-      console.log('user profile data', data);
       return data;
-    } catch (err) {
-      throw new Error(err);
+    } catch (error) {
+      console.log(error);
+      throw new Error(`google responded with ${error}`);
     }
   }
 }
