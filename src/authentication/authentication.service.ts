@@ -2,6 +2,7 @@ import axios from 'axios';
 import querystring from 'querystring';
 import { AppContextAuthenticationService } from 'src/interfaces/app_context_auth_service.interface';
 import { MethodReturnValue } from 'src/interfaces/method_return_value.interface';
+import { IUser } from 'src/interfaces/user_model.interface';
 import { GoogleTokenResponse } from 'src/types/google-token-reponse';
 import { GoogleOAuthConfig } from 'src/types/googleOAuthConfig';
 
@@ -37,7 +38,9 @@ export class AuthenticationService implements AppContextAuthenticationService {
         message: 'could not get access token',
       };
     }
-    const userInfo = await this.getGoogleUserInfo(googleTokeRes?.access_token);
+    const userInfo: IUser = await this.getGoogleUserInfo(
+      googleTokeRes?.access_token,
+    );
     if (!userInfo)
       return {
         data: null,
@@ -82,9 +85,9 @@ export class AuthenticationService implements AppContextAuthenticationService {
     }
   }
 
-  async getGoogleUserInfo(accessToken: string): Promise<Record<string, any>> {
+  async getGoogleUserInfo(accessToken: string): Promise<IUser> {
     try {
-      const { data } = await axios.get<Record<any, any>>(
+      const { data } = await axios.get<IUser>(
         `${this.oAuthConfig.profileInfoUrl}?alt=json&access_token=${accessToken}`,
       );
       return data;

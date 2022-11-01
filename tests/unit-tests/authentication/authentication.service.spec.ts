@@ -93,10 +93,14 @@ describe('AuthenticationService login test', () => {
       .spyOn(authService, 'getGoogleUserInfo')
       .mockImplementation((code: string) =>
         Promise.resolve({
+          sub: '1234dskdsf',
           name: 'john doe',
-          givenName: 'johm',
-          email: 'johndoe@gmail.com',
-          picture: 'https://johndoeimgae.com',
+          given_name: 'johnny',
+          family_name: 'doe',
+          picture: 'https://url.com',
+          email: 'john@doe.com',
+          email_verified: false,
+          locale: 'en-GB"',
         }),
       );
 

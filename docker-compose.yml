@@ -12,7 +12,7 @@ services:
     ports:
       - ${PORT}:3000
     environment:
-      - MONGO_CONNECTION_URL=${MONGO_CONNECTION_URL:-mongodb://root:rootPass@mongo:27017/}
+      - MONGO_CONNECTION_URL=${MONGO_CONNECTION_URL:-mongodb://root:root@localhost:27017/}
       - GOOGLE_CLIENT_ID=${GOOGLE_CLIENT_ID}
       - GOOGLE_CLIENT_SECRET=${GOOGLE_CLIENT_SECRET}
       - GOOGLE_LOGIN_ROOT=${GOOGLE_LOGIN_ROOT}
@@ -28,7 +28,7 @@ services:
     env_file:
       - "./.env"
     networks:
-      - yaksha-network    
+      - yaksha-network 
     depends_on:
       mongo:
         condition: service_healthy    
@@ -49,6 +49,8 @@ services:
       start_period: 20s
     networks: 
       - yaksha-network
+    ports:
+      - "27017:27017"
     volumes:
       - yaksha-auth-mongo-vol:/data/db:rw
 
