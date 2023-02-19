@@ -1,9 +1,11 @@
 import express from 'express';
 import { Application, RequestHandler } from 'express-serve-static-core';
 import { AppContextController } from 'src/interfaces/app_context_controller.interface';
+import { Server } from 'http';
 export class AppContext {
   private app: Application;
   private port: number;
+  private server: Server;
   constructor();
   constructor(port?: number);
 
@@ -13,9 +15,15 @@ export class AppContext {
   }
 
   public startServer(port: number): void {
-    this.app.listen(port ?? this.port, () => {
+    this.server = this.app.listen(port ?? this.port, () => {
       console.log(`server started at PORT:${this.port ?? port}`);
     });
+  }
+
+  public stopServer(): void {
+    console.log('closing the server');
+    this.server.close();
+    process.exit(0);
   }
 
   public addMiddleWare(...middleWares: Array<RequestHandler>): void {

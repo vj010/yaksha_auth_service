@@ -3,6 +3,7 @@ import querystring from 'querystring';
 import { AppContextAuthenticationService } from 'src/interfaces/app_context_auth_service.interface';
 import { MethodReturnValue } from 'src/interfaces/method_return_value.interface';
 import { IUser } from 'src/interfaces/user_model.interface';
+import { User, UserDoc } from '../models/user';
 import { GoogleTokenResponse } from 'src/types/google-token-reponse';
 import { GoogleOAuthConfig } from 'src/types/googleOAuthConfig';
 
@@ -48,15 +49,21 @@ export class AuthenticationService implements AppContextAuthenticationService {
         error: null,
         message: 'could not get user info',
       };
-    return { data: userInfo, success: true, error: null };
+    const user: IUser = await this.registerUser(userInfo);
+    return { data: user, success: true, error: null };
   }
 
   async logout(): Promise<void> {
     throw new Error('Method not implemented.');
   }
 
-  registerUser(): void | Promise<void> {
-    throw new Error('Method not implemented.');
+  async registerUser(userInfo: IUser): Promise<IUser> {
+    let user: UserDoc = await User.findOne({ email: userInfo.email });
+    if (!user) {
+      user = User.build(userInfo);
+      await user.save();
+    }
+    return user;
   }
 
   async getGoogleAuthTokens(code: string): Promise<GoogleTokenResponse> {

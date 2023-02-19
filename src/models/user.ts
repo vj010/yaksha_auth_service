@@ -9,14 +9,23 @@ const userSchema = new mongoose.Schema({
   picture: { type: String },
   email: { type: String },
   emailVerified: { type: Boolean },
-  locale: { type: Boolean },
+  locale: { type: String },
 });
 
-interface UserModelInterface extends mongoose.Model<any> {
-  build(user: IUser): any;
+interface UserModelInterface extends mongoose.Model<UserDoc> {
+  build(user: IUser): UserDoc;
 }
 
-export const User = mongoose.model<any, UserModelInterface>('User', userSchema);
+export interface UserDoc extends mongoose.Document {
+  sub: string;
+  name: string;
+  given_name: string;
+  family_name: string;
+  picture: string;
+  email: string;
+  email_verified: boolean;
+  locale: string;
+}
 
 userSchema.statics.build = (user: IUser) => {
   return new User({
@@ -30,3 +39,8 @@ userSchema.statics.build = (user: IUser) => {
     locale: user.locale,
   });
 };
+
+export const User = mongoose.model<UserDoc, UserModelInterface>(
+  'User',
+  userSchema,
+);

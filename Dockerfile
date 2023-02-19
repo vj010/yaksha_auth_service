@@ -9,3 +9,4 @@ RUN npm run build
 ARG MODE
 ENV APP_MODE=${MODE}
 CMD ["sh","-c","npm run ${APP_MODE}" ]
+EXPOSE ${PORT}

@@ -13,8 +13,13 @@ const appContext: AppContext = new AppContext();
 
 appContext.addMiddleWare(express.json(), urlencoded({ extended: true }));
 
-mongoose.connect(process.env.MONGO_CONNECTION_URL, () => {
-  console.log('mongo connected');
+mongoose.connect(process.env.MONGO_CONNECTION_URL, (error) => {
+  if (error) {
+    console.log('mongo connection failed', error);
+    appContext.stopServer();
+  } else {
+    console.log('mongo connected');
+  }
 });
 
 appContext.setControllerRoutes(

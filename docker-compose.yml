@@ -12,7 +12,7 @@ services:
     ports:
       - ${PORT}:3000
     environment:
-      - MONGO_CONNECTION_URL=${MONGO_CONNECTION_URL:-mongodb://root:root@localhost:27017/}
+      - MONGO_CONNECTION_URL=${MONGO_CONNECTION_URL:-mongodb://root:root@yaksha_auth_mongo:27017/yaksha_users}
       - GOOGLE_CLIENT_ID=${GOOGLE_CLIENT_ID}
       - GOOGLE_CLIENT_SECRET=${GOOGLE_CLIENT_SECRET}
       - GOOGLE_LOGIN_ROOT=${GOOGLE_LOGIN_ROOT}
@@ -41,6 +41,7 @@ services:
     environment:
       - MONGO_INITDB_ROOT_USERNAME=${MONGO_INITDB_ROOT_USERNAME:-root}
       - MONGO_INITDB_ROOT_PASSWORD=${MONGO_INITDB_ROOT_PASSWORD:-root}
+      
     healthcheck:
       test: echo 'db.runCommand({serverStatus:1}).ok' | mongo admin -u ${MONGO_INITDB_ROOT_USERNAME:-root} -p ${MONGO_INITDB_ROOT_USERNAME:-root} --quiet | grep 1
       interval: 10s
