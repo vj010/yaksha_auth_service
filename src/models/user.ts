@@ -16,16 +16,7 @@ interface UserModelInterface extends mongoose.Model<UserDoc> {
   build(user: IUser): UserDoc;
 }
 
-export interface UserDoc extends mongoose.Document {
-  sub: string;
-  name: string;
-  given_name: string;
-  family_name: string;
-  picture: string;
-  email: string;
-  email_verified: boolean;
-  locale: string;
-}
+export interface UserDoc extends mongoose.Document, IUser {}
 
 userSchema.statics.build = (user: IUser) => {
   return new User({

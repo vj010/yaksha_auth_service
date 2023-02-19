@@ -21,6 +21,13 @@ describe('AuthenticationService getLoginUrl test', () => {
     const loginUrl: string = await authService.getLoginUrl();
     expect(loginUrl.length).not.toBeLessThan(1);
   });
+
+  it('getLoginUrl login url check', async () => {
+    const loginUrl: string = await authService.getLoginUrl();
+    expect(loginUrl).toBe(
+      'https://accounts.google.com/o/oauth2/v2/auth?redirect_uri=http%3A%2F%2Flocalhost%3A3000%2Fauthenticate%2Flogin&client_id=32693438658-m7lqhhcnqekfp85tsor2rbpmcqrqaaee.apps.googleusercontent.com&access_type=offline&response_type=code&prompt=consent&scope=https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fuserinfo.profile+https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fuserinfo.email',
+    );
+  });
 });
 
 describe('Authentication Service getGoogleAuthTokens', () => {

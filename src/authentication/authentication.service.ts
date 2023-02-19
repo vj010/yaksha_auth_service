@@ -1,11 +1,10 @@
 import axios from 'axios';
-import querystring from 'querystring';
 import { AppContextAuthenticationService } from 'src/interfaces/app_context_auth_service.interface';
 import { MethodReturnValue } from 'src/interfaces/method_return_value.interface';
 import { IUser } from 'src/interfaces/user_model.interface';
-import { User, UserDoc } from '../models/user';
 import { GoogleTokenResponse } from 'src/types/google-token-reponse';
 import { GoogleOAuthConfig } from 'src/types/googleOAuthConfig';
+import { User, UserDoc } from '../models/user';
 
 export class AuthenticationService implements AppContextAuthenticationService {
   private oAuthConfig: GoogleOAuthConfig;
@@ -23,8 +22,9 @@ export class AuthenticationService implements AppContextAuthenticationService {
       prompt: this.oAuthConfig.prompt,
       scope: this.oAuthConfig.scope.join(' '),
     };
+    const urlSearchParams = new URLSearchParams(options);
 
-    return `${rootUrl}?${querystring.stringify(options)}`;
+    return `${rootUrl}?${urlSearchParams.toString()}`;
   }
 
   async login(code: string): Promise<MethodReturnValue<any>> {
@@ -78,7 +78,7 @@ export class AuthenticationService implements AppContextAuthenticationService {
     try {
       const { data } = await axios.post<GoogleTokenResponse>(
         url,
-        querystring.stringify(values),
+        new URLSearchParams(values).toString(),
         {
           headers: {
             'Content-Type': 'application/x-www-form-urlencoded',
