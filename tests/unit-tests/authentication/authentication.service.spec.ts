@@ -1,4 +1,5 @@
 import dontenv from 'dotenv';
+import { IUser } from 'src/interfaces/user_model.interface';
 import { AuthenticationService } from '../../../src/authentication/authentication.service';
 import { googleOAuthConfig } from '../../../src/config/google-oauth-config';
 dontenv.config();
@@ -76,6 +77,17 @@ describe('AuthenticationService login test', () => {
   });
 
   it('login token method without error', async () => {
+    const userInfo: IUser = {
+      sub: '1234dskdsf',
+      name: 'john doe',
+      given_name: 'johnny',
+      family_name: 'doe',
+      picture: 'https://url.com',
+      email: 'john@doe.com',
+      email_verified: false,
+      locale: 'en-GB"',
+    };
+
     const getGoogleAuthTokensSpy = jest
       .spyOn(authService, 'getGoogleAuthTokens')
       .mockImplementation(() =>
@@ -91,18 +103,13 @@ describe('AuthenticationService login test', () => {
 
     const getGoogleUserInfoSpy = jest
       .spyOn(authService, 'getGoogleUserInfo')
-      .mockImplementation((code: string) =>
-        Promise.resolve({
-          sub: '1234dskdsf',
-          name: 'john doe',
-          given_name: 'johnny',
-          family_name: 'doe',
-          picture: 'https://url.com',
-          email: 'john@doe.com',
-          email_verified: false,
-          locale: 'en-GB"',
-        }),
-      );
+      .mockImplementation((code: string) => Promise.resolve(userInfo));
+
+    const registerUserSpy = jest
+      .spyOn(authService, 'registerUser')
+      .mockImplementation(async (userInfo: IUser) => {
+        return Promise.resolve(userInfo);
+      });
 
     await authService.login('abc');
     expect(getGoogleAuthTokensSpy).toHaveBeenCalledTimes(1);
@@ -118,5 +125,7 @@ describe('AuthenticationService login test', () => {
         id_token: 'mno',
       }),
     );
+    expect(registerUserSpy).toHaveBeenCalledTimes(1);
+    expect(registerUserSpy).toReturnWith(Promise.resolve(userInfo));
   });
 });
