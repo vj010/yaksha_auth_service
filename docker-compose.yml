@@ -32,6 +32,8 @@ services:
     depends_on:
       mongo:
         condition: service_healthy    
+      redis:
+        condition:  service_healthy
   
   mongo:
     image: mongo:5.0.9
@@ -54,10 +56,28 @@ services:
       - "27017:27017"
     volumes:
       - yaksha-auth-mongo-vol:/data/db:rw
+  
+  redis:
+    image: redis:7.0.8
+    container_name: yaksha_auth_redis
+    env_file:
+      - "./.env"
+    networks:
+      - yaksha-network    
+    healthcheck:
+      test: [ "CMD", "redis-cli", "--raw", "incr", "ping" ]
+      interval: 10s
+      timeout: 30s
+      retries: 5
+      start_period: 10s
+    volumes:
+      - yasksha-auth-redis-vol:/data
+    
 
 networks:
   yaksha-network:
 
 volumes:
   yaksha-auth-mongo-vol:
+  yasksha-auth-redis-vol:
 
