@@ -8,10 +8,37 @@ import { AuthenticationController } from './authentication/authentication.contro
 import { AuthenticationService } from './authentication/authentication.service';
 import { googleOAuthConfig } from './config/google-oauth-config';
 import mongoose from 'mongoose';
+import session, { SessionOptions } from 'express-session';
+import { Redis } from 'ioredis';
+import redisStoreInitialization, { RedisStore } from 'connect-redis';
 
 const appContext: AppContext = new AppContext();
+const redisStore: RedisStore = redisStoreInitialization(session);
 
-appContext.addMiddleWare(express.json(), urlencoded({ extended: true }));
+redisStore.client = new Redis({
+  host: process.env.REDIS_HOST,
+  port: parseInt(process.env.REDIS_PORT),
+});
+
+const sessionOptions: SessionOptions = {
+  secret: process.env.SESSION_SECRET,
+  store: new redisStore({
+    host: process.env.REDIS_HOST,
+    port: parseInt(process.env.REDIS_PORT),
+    client: new Redis({
+      host: process.env.REDIS_HOST,
+      port: parseInt(process.env.REDIS_PORT),
+    }),
+  }),
+  resave: false,
+  saveUninitialized: false,
+};
+
+appContext.addMiddleWare(
+  express.json(),
+  urlencoded({ extended: true }),
+  session(sessionOptions),
+);
 
 mongoose.connect(process.env.MONGO_CONNECTION_URL, (error) => {
   if (error) {
