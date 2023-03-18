@@ -27,6 +27,7 @@ export class AuthenticationController implements AppContextController {
     let loginStatus: MethodReturnValue<any>;
     try {
       loginStatus = await this.appContextAuthenticationService.login(
+        request.session,
         request?.query?.code,
       );
       response.status(200).send(loginStatus.data);

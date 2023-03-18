@@ -5,7 +5,7 @@ import { IUser } from 'src/interfaces/user_model.interface';
 import { GoogleTokenResponse } from 'src/types/google-token-reponse';
 import { GoogleOAuthConfig } from 'src/types/googleOAuthConfig';
 import { User, UserDoc } from '../models/user';
-
+import { RequestSession, Session } from 'express-session';
 export class AuthenticationService implements AppContextAuthenticationService {
   private oAuthConfig: GoogleOAuthConfig;
   constructor(googleOAuthConfig: GoogleOAuthConfig) {
@@ -27,10 +27,14 @@ export class AuthenticationService implements AppContextAuthenticationService {
     return `${rootUrl}?${urlSearchParams.toString()}`;
   }
 
-  async login(code: string): Promise<MethodReturnValue<any>> {
+  async login(
+    session: RequestSession,
+    code: string,
+  ): Promise<MethodReturnValue<any>> {
     const googleTokeRes: GoogleTokenResponse = await this.getGoogleAuthTokens(
       code,
     );
+
     if (!googleTokeRes?.access_token) {
       return {
         data: null,
@@ -50,6 +54,7 @@ export class AuthenticationService implements AppContextAuthenticationService {
         message: 'could not get user info',
       };
     const user: IUser = await this.registerUser(userInfo);
+    session.user = user;
     return { data: user, success: true, error: null };
   }
 

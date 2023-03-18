@@ -11,6 +11,7 @@ import mongoose from 'mongoose';
 import session, { SessionOptions } from 'express-session';
 import { Redis } from 'ioredis';
 import redisStoreInitialization, { RedisStore } from 'connect-redis';
+import { cookieParser } from 'cookie-parser';
 
 const appContext: AppContext = new AppContext();
 const redisStore: RedisStore = redisStoreInitialization(session);
@@ -38,6 +39,7 @@ appContext.addMiddleWare(
   express.json(),
   urlencoded({ extended: true }),
   session(sessionOptions),
+  // cookieParser(process.env.SESSION_SECRET),
 );
 
 mongoose.connect(process.env.MONGO_CONNECTION_URL, (error) => {
