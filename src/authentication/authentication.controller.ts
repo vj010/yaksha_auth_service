@@ -36,8 +36,14 @@ export class AuthenticationController implements AppContextController {
     }
   }
 
-  logoutHandler(reques: Request, response: Response) {
-    response.send('logout');
+  async logoutHandler(request: Request, response: Response): Promise<void> {
+    request.session.destroy((err) => {
+      console.log(err);
+      response
+        .status(500)
+        .send('encounterd some isuse, please try again later');
+    });
+    response.status(200).send('log out successful');
   }
 
   getRouter(): Router {

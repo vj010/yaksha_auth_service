@@ -1,11 +1,11 @@
 import axios from 'axios';
+import { RequestSession } from 'express-session';
 import { AppContextAuthenticationService } from 'src/interfaces/app_context_auth_service.interface';
 import { MethodReturnValue } from 'src/interfaces/method_return_value.interface';
 import { IUser } from 'src/interfaces/user_model.interface';
 import { GoogleTokenResponse } from 'src/types/google-token-reponse';
 import { GoogleOAuthConfig } from 'src/types/googleOAuthConfig';
 import { User, UserDoc } from '../models/user';
-import { RequestSession, Session } from 'express-session';
 export class AuthenticationService implements AppContextAuthenticationService {
   private oAuthConfig: GoogleOAuthConfig;
   constructor(googleOAuthConfig: GoogleOAuthConfig) {
@@ -56,10 +56,6 @@ export class AuthenticationService implements AppContextAuthenticationService {
     const user: IUser = await this.registerUser(userInfo);
     session.user = user;
     return { data: user, success: true, error: null };
-  }
-
-  async logout(): Promise<void> {
-    throw new Error('Method not implemented.');
   }
 
   async registerUser(userInfo: IUser): Promise<IUser> {
